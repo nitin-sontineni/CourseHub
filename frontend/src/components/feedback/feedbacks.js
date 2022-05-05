@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import axios from "axios";
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -8,52 +8,24 @@ import Typography from '@mui/material/Typography';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Rating from '@mui/material/Rating';
 import StarIcon from '@mui/icons-material/Star';
+import "./feedback.css";
 
 function Feedbacks() {
-  //const [todos, setTodos] = useState([]);
-  var todos =
-  [
-    {
-      "id"   : "1",
-      "time" : "10.10",
-      "rating" : 4,
-      "comment" : "Explanation was good",
-    },
-    {
-      "id": "2",
-      "time" : "10.30",
-      "rating" : 3,
-      "comment" : "Video quality can be improved",
-    }
-  ]
+  const [feedbacks, setFeedbacks] = React.useState([]);
+  
   const [mounted, setMounted] = useState(false);
-  var [input, setInput] = useState('');
-  var [newInput, setNewInput] = useState('');
-  const [edit,setEdit] = useState(false);
-
-  const handleChange = e => {
-    setInput(e.target.value);
-  };
-
-  const handleSubmit = e => {
-    e.preventDefault();
-    console.log(input);
-    setInput('');
-  };
 
   if(!mounted) {
   axios.post(
     "http://localhost:8080/student/lecturelink",
       {
-        "courseId" : window.sessionStorage.getItem("course_id"),
-        "lecNo" : "1",
+        "courseId" : window.sessionStorage.getItem("student_course_id"),
+        "lecNo" : window.sessionStorage.getItem("student_lecNo"),
         "studentId" : window.sessionStorage.getItem("student_id")
       }
     )
   .then(res => { 
-    console.log(res)
-    //setTodos([res["data"]["notes"]["_id"],res["data"]["notes"]["content"],res["data"]["notes"]["timeStamp"]])
-    //setData(res["data"]["professor"]["courses"])
+    setFeedbacks(res["data"]["reviews"]);
   })
   .catch(err => {
     alert(err);
@@ -64,31 +36,40 @@ function Feedbacks() {
     setMounted(true)
   },[])
 
-    // axios.post(
-    //   "http://localhost:8080/student/note/add",
-    //     {
-    //       "note": {
-    //       "lecNo" : "1",
-    //       "courseId" : window.sessionStorage.getItem("course_id"),
-    //       "timeStamp" : todo.time,
-    //       "content" : todo.text,
-    //       "studentId" : window.sessionStorage.getItem("student_id"),
-    //       "public" : false
-    //       }
-    //   }
-    //   )
-    // .then(res => { 
-    //   console.log(res)
-    // })
-    // .catch(err => {
-    //   alert(err);
-    // })
+  function handleDelete(key) {
+    axios.post(
+      "http://localhost:8080/student/review/delete",
+      {
+        "reviewId" : key,
+      }
+      )
+    .then(res => { 
+      axios.post(
+        "http://localhost:8080/student/lecturelink",
+          {
+            "courseId" : window.sessionStorage.getItem("student_course_id"),
+            "lecNo" : window.sessionStorage.getItem("student_lecNo"),
+            "studentId" : window.sessionStorage.getItem("student_id")
+          }
+        )
+      .then(res => { 
+        setFeedbacks(res["data"]["reviews"])
+      })
+      .catch(err => {
+        alert(err);
+        })
+        
+      })
+      .catch(err => {
+        alert(err);
+      })
+    }
 
 
   return (
     <div className='notes-app'>
     <Box sx={{margin: 1}}>
-    {todos.length === 0 ? <h3> No Feedbacks</h3> :
+    {feedbacks.length === 0 ? <h3 style = {{color:"white"}}> No Feedback</h3> :
     <Box sx = {{
       display: 'flex',
       flexDirection: 'column',
@@ -97,9 +78,9 @@ function Feedbacks() {
       width: 100
     }}
     >
-    {(todos).map((elem) => (
+    {((feedbacks)).map((elem) => (
     <Box sx={{margin : 1}}> 
-    <Card sx={{ width: 650}} id={elem.id}>
+    <Card sx={{ width: 650}} id={elem._id}>
       <CardContent>
         <Box sx={{flexDirection:'row'}}>
         <Box sx={{ display: 'flex',
@@ -115,7 +96,7 @@ function Feedbacks() {
           borderRadius: 5
         }}>
         <Typography gutterBottom variant="h7" component="div" fontWeight='bold' color='white'>
-          {elem.time}
+          {elem.timeStamp}
         </Typography>
         </Box>
         <Box border={1}>
@@ -147,14 +128,14 @@ function Feedbacks() {
           justifyContent: "flex-start"
         }}>
         <Typography variant="h7" color="text.primary" style={{ display: "flex", justifyContent: "flex-start" }}>
-          {elem.comment}
+          {elem.feedBack}
         </Typography>
         </Box>
         </Box>
         </Box>
       </CardContent> 
       <CardActions style={{ display: "flex", justifyContent: "flex-end" }}>
-        <DeleteIcon />
+        <DeleteIcon onClick={() => handleDelete(elem._id)}/>
       </CardActions>   
     </Card>
     </Box>

@@ -102,6 +102,7 @@ router.post("/course/enroll", (req, res) => {
   });
 });
 
+//done
 router.post("/lecturelink", (req, res) => {
   let notesToSend = [];
   let reviewsToSend = [];
@@ -144,6 +145,7 @@ router.post("/lecturelink", (req, res) => {
 });
 
 // send  {note  : {json object}}
+//done
 router.post("/note/add", (req, res) => {
   const newNote = new Note(req.body.note);
   newNote.save((err, savedNote) => {
@@ -196,7 +198,7 @@ router.post("/review/add", (req, res) => {
 });
 
 router.post("/review/delete", (req, res) => {
-  const newReview = new Review(req.body.review);
+  //const newReview = new Review(req.body.review);
   Review.deleteOne({ _id: mongoose.Types.ObjectId(req.body.reviewId) }, (err) => {
     if (err) {
       console.log(err);

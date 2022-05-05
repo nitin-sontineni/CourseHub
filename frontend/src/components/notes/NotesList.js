@@ -1,12 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
-//import NotesForm from './NotesForm';
-import Note from './Note';
+import React, { useState, useReducer } from 'react';
 import axios from "axios";
 import "./notes.css";
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import { Box } from '@mui/system';
 import Typography from '@mui/material/Typography';
@@ -14,36 +11,39 @@ import BorderColorIcon from '@mui/icons-material/BorderColor';
 import DeleteIcon from '@mui/icons-material/Delete';
 import TextareaAutosize from '@mui/material/TextareaAutosize';
 import CheckIcon from '@mui/icons-material/Check';
+import { TextField } from '@mui/material';
+import { Grid } from '@mui/material';
 
 function Notes() {
-  //const [todos, setTodos] = useState([]);
-  var todos =
-  [
-    {
-      "id"   : "1",
-      "time" : "10.10",
-      "note" : "Agile method is a way to manage a project by breaking it up into several phases",
-      "edit" : false
-    },
-    {
-      "id": "2",
-      "time" : "10.30",
-      "note" : "Exaplined UML diagram",
-      "edit" : false
-    }
-  ]
+  const [todos, setTodos] = useState([]);
   const [mounted, setMounted] = useState(false);
-  var playedTime = window.sessionStorage.getItem("playedTime");
+  var playedTime = window.sessionStorage.getItem("student_playedTime");
   var placeholder = `Add Notes at ${playedTime}`
   var [input, setInput] = useState('');
   var [newInput, setNewInput] = useState('');
-  const [edit,setEdit] = useState(false);
 
-  const inputRef = useRef(null);
+  if(!mounted) {
+    axios.post(
+      "http://localhost:8080/student/lecturelink",
+        {
+          "courseId" : window.sessionStorage.getItem("student_course_id"),
+          "lecNo" : window.sessionStorage.getItem("student_lecNo"),
+          "studentId" : window.sessionStorage.getItem("student_id")
+        }
+      )
+    .then(res => { 
+      setTodos(res["data"]["notes"]["0"])
+    })
+    .catch(err => {
+      alert(err);
+    })
+    }
+  
+    React.useEffect(() =>{
+      setMounted(true)
+    },[])
 
-  useEffect(() => {
-    inputRef.current.focus();
-  });
+  const [, forceUpdate] = useReducer(x => x + 1, 0);
 
   const newInputChangeHandler = (event) => {
     setNewInput(event.target.value);
@@ -55,115 +55,164 @@ function Notes() {
 
   const handleSubmit = e => {
     e.preventDefault();
-    console.log(input);
-    setInput('');
+    axios.post(
+      "http://localhost:8080/student/note/add",
+        {
+          "note" : {
+          "courseId" : window.sessionStorage.getItem("student_course_id"),
+          "lecNo" : window.sessionStorage.getItem("student_lecNo"),
+          "studentId" : window.sessionStorage.getItem("student_id"),
+          "content" : input,
+          "timeStamp" : playedTime,
+          "public" : false
+          }
+        }
+      )
+    .then(res => { 
+      axios.post(
+        "http://localhost:8080/student/lecturelink",
+          {
+            "courseId" : window.sessionStorage.getItem("student_course_id"),
+            "lecNo" : window.sessionStorage.getItem("student_lecNo"),
+            "studentId" : window.sessionStorage.getItem("student_id")
+          }
+        )
+      .then(res => { 
+        setTodos(res["data"]["notes"]["0"])
+        forceUpdate();
+      })
+      .catch(err => {
+        alert(err);
+      })
+    })
+    .catch(err => {
+      alert(err);
+    })
+    setInput("");
   };
 
   function handleEdit(key) {
-    //console.log(key);
     for(var x in todos)
     {
-      if(todos[x].id === key)
+      if(todos[x]._id === key)
       {
-        todos[x].edit = !(todos[x].edit)
+        todos[x].public = true
+        forceUpdate();
       }
     }
   }
 
-  function handleUpdate(key) {
-    for(var x in todos)
+  function handleDelete(key) {
+    axios.post(
+      "http://localhost:8080/student/note/delete",
+        {
+          "noteId" : key,
+        }
+      )
+    .then(res => { 
+      axios.post(
+        "http://localhost:8080/student/lecturelink",
+          {
+            "courseId" : window.sessionStorage.getItem("student_course_id"),
+            "lecNo" : window.sessionStorage.getItem("student_lecNo"),
+            "studentId" : window.sessionStorage.getItem("student_id")
+          }
+        )
+      .then(res => { 
+        setTodos(res["data"]["notes"]["0"])
+      })
+      .catch(err => {
+        alert(err);
+      })
+      
+    })
+    .catch(err => {
+      alert(err);
+    })
+  }
+
+  function handleUpdate(key,timeStamp) {
+    if(newInput !==  "")
     {
-      if(todos[x].id === key)
+      axios.post(
+        "http://localhost:8080/student/note/update",
+        {
+          "note" : {
+          "courseId" : window.sessionStorage.getItem("student_course_id"),
+          "lecNo" : window.sessionStorage.getItem("student_lecNo"),
+          "studentId" : window.sessionStorage.getItem("student_id"),
+          "content" : newInput,
+          "timeStamp" : timeStamp,
+          "public" : false,
+          "noteId" : key
+          }
+        }
+        )
+      .then(res => { 
+        axios.post(
+          "http://localhost:8080/student/lecturelink",
+            {
+              "courseId" : window.sessionStorage.getItem("student_course_id"),
+              "lecNo" : window.sessionStorage.getItem("student_lecNo"),
+              "studentId" : window.sessionStorage.getItem("student_id")
+            }
+          )
+        .then(res => { 
+          setTodos(res["data"]["notes"]["0"])
+        })
+        .catch(err => {
+          alert(err);
+        })
+      })
+      .catch(err => {
+        alert(err);
+      })
+    }
+    else
+    {
+      for(var x in todos)
       {
-        todos[x].edit = !(todos[x].edit)
+        if(todos[x]._id === key)
+        {
+          todos[x].public = false
+          forceUpdate();
+        }
       }
+
     }
   }
-
-  if(!mounted) {
-  axios.post(
-    "http://localhost:8080/student/lecturelink",
-      {
-        "courseId" : window.sessionStorage.getItem("course_id"),
-        "lecNo" : "1",
-        "studentId" : window.sessionStorage.getItem("student_id")
-      }
-    )
-  .then(res => { 
-    console.log(res)
-    //setTodos([res["data"]["notes"]["_id"],res["data"]["notes"]["content"],res["data"]["notes"]["timeStamp"]])
-    //setData(res["data"]["professor"]["courses"])
-  })
-  .catch(err => {
-    alert(err);
-  })
-  }
-
-  React.useEffect(() =>{
-    setMounted(true)
-  },[])
-
-    // axios.post(
-    //   "http://localhost:8080/student/note/add",
-    //     {
-    //       "note": {
-    //       "lecNo" : "1",
-    //       "courseId" : window.sessionStorage.getItem("course_id"),
-    //       "timeStamp" : todo.time,
-    //       "content" : todo.text,
-    //       "studentId" : window.sessionStorage.getItem("student_id"),
-    //       "public" : false
-    //       }
-    //   }
-    //   )
-    // .then(res => { 
-    //   console.log(res)
-    // })
-    // .catch(err => {
-    //   alert(err);
-    // })
-
 
   return (
+    <div>
+    <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1, alignItems:"center" }}>
+      <Grid container>
+        <Grid item style={{ padding: "10px"}}>
+            <TextField
+              margin="normal"
+              id="note"
+              label= {placeholder}
+              name="note"
+              autoComplete="note"
+              value={input}
+              onChange={handleChange}
+              style = {{width: 500}}
+            />
+          </Grid>
+            <Grid item alignItems="stretch" style={{ display: "flex", padding: "10px" }}>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+            >
+              Add Notes
+            </Button>
+            </Grid>
+          </Grid>
+      </Box>
     <div className='notes-app'>
-      <Box>
-      <form onSubmit={handleSubmit} className='todo-form'>
-      {edit ? (
-        <>
-          <input
-            placeholder='Update your item'
-            value={input}
-            onChange={handleChange}
-            name='text'
-            ref={inputRef}
-            className='todo-input edit'
-          />
-          <button onClick={handleSubmit} className='todo-button edit'>
-            Update
-          </button>
-        </>
-      ) : (
-        <>
-          <input
-            placeholder={placeholder}
-            value={input}
-            onChange={handleChange}
-            name='text'
-            className='todo-input'
-            ref={inputRef}      
-          />
-          <button onClick={handleSubmit} className='todo-button'>
-            Add Notes
-          </button>
-        </>
-      )}
-    </form>
-      {/* <Note
-        todos={todos}
-        removeTodo={removeTodo}
-        updateTodo={updateTodo}
-      /> */}
-    {todos.length === 0 ? <h3> No Notes</h3> :
+    <Box>
+    {todos.length === 0 ? <h3 style = {{color:"white"}}> No Notes Added</h3> :
     <Box sx = {{
       margin: 1,
       display: 'flex',
@@ -175,7 +224,7 @@ function Notes() {
     >
     {(todos).map((elem) => (
     <Box sx={{margin : 1}}> 
-    <Card sx={{ width: 650}} id={elem.id}>
+    <Card sx={{ width: 670}} id={elem._id}>
       <CardContent>
         <Box sx={{flexDirection:'row'}}>
         <Box sx={{ display: 'flex',
@@ -191,7 +240,7 @@ function Notes() {
           borderRadius: 5
         }}>
         <Typography gutterBottom variant="h7" component="div" fontWeight='bold' color='white'>
-          {elem.time}
+          {elem.timeStamp}
         </Typography>
         </Box>
         <Box sx={{
@@ -205,15 +254,16 @@ function Notes() {
           margin: 1,
           justifyContent: "flex-start",
           padding: "10px"}}>
-        {!elem.edit ? (
+        {!elem.public ? (
         <Typography variant="h7" color="text.primary" style={{ display: "flex", justifyContent: "flex-start", alignContent: "flex-start" }}>
-          {elem.note}
+          {elem.content}
         </Typography> ): (
           <TextareaAutosize
           aria-label="minimum height"
           minRows={3}
-          defaultValue= {elem.note}
-          style={{ width: 200 }}
+          defaultValue= {elem.content}
+          // defaultValue= "Well Explained"
+          style={{ width: 600 }}
           onChange={newInputChangeHandler}
         /> )
         }
@@ -222,11 +272,12 @@ function Notes() {
       </CardContent> 
       <CardActions style={{ display: "flex", justifyContent: "flex-end" }}>
 
-        { !elem.edit ? (<BorderColorIcon onClick={() => handleEdit(elem.id)}/>) :
+        { !elem.public ? (<BorderColorIcon onClick={() => handleEdit(elem._id)}/>) :
         (
-          <CheckIcon onClick={() => handleUpdate(elem.id)} />
+          <CheckIcon onClick={() => handleUpdate(elem._id,elem.timeStamp)} />
         )}
-        <DeleteIcon />
+
+        <DeleteIcon onClick={() => handleDelete(elem._id)}/>
       </CardActions>   
     </Card>
     </Box>
@@ -234,6 +285,7 @@ function Notes() {
     </Box>
     }
     </Box>
+    </div>
     </div>
   );
 

@@ -1,21 +1,10 @@
 import * as React from 'react';
 import { styled } from '@mui/system';
-import TablePaginationUnstyled from '@mui/base/TablePaginationUnstyled';
 import MenuAppBar from '../../header';
 import AddLecture from './addLecture';
 import "./profCourse.css";
 import axios from 'axios';
 import {useState} from 'react';
-
-function createData(no, dol , title, recording, slides) {
-  return { no, dol , title, recording, slides };
-}
-
-
-const blue = {
-  200: '#A5D8FF',
-  400: '#3399FF',
-};
 
 const grey = {
   50: '#F3F6F9',
@@ -52,77 +41,8 @@ const Root = styled('div')(
   `,
 );
 
-const CustomTablePagination = styled(TablePaginationUnstyled)(
-  ({ theme }) => `
-  & .MuiTablePaginationUnstyled-spacer {
-    display: none;
-  }
-  & .MuiTablePaginationUnstyled-toolbar {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-
-    @media (min-width: 768px) {
-      flex-direction: row;
-      align-items: center;
-    }
-  }
-  & .MuiTablePaginationUnstyled-selectLabel {
-    margin: 0;
-  }
-  & .MuiTablePaginationUnstyled-select {
-    padding: 2px;
-    border: 1px solid ${theme.palette.mode === 'dark' ? grey[800] : grey[200]};
-    border-radius: 50px;
-    background-color: transparent;
-    &:hover {
-      background-color: ${theme.palette.mode === 'dark' ? grey[800] : grey[50]};
-    }
-    &:focus {
-      outline: 1px solid ${theme.palette.mode === 'dark' ? blue[400] : blue[200]};
-    }
-  }
-  & .MuiTablePaginationUnstyled-displayedRows {
-    margin: 0;
-
-    @media (min-width: 768px) {
-      margin-left: auto;
-    }
-  }
-  & .MuiTablePaginationUnstyled-actions {
-    padding: 2px;
-    border: 1px solid ${theme.palette.mode === 'dark' ? grey[800] : grey[200]};
-    border-radius: 50px;
-    text-align: center;
-  }
-  & .MuiTablePaginationUnstyled-actions > button {
-    margin: 0 8px;
-    border: transparent;
-    border-radius: 2px;
-    background-color: transparent;
-    &:hover {
-      background-color: ${theme.palette.mode === 'dark' ? grey[800] : grey[50]};
-    }
-    &:focus {
-      outline: 1px solid ${theme.palette.mode === 'dark' ? blue[400] : blue[200]};
-    }
-  }
-  `,
-);
-
 export default function ProfCourse() {
 
-  // Avoid a layout jump when reaching the last page with empty rows.
-  // const emptyRows =
-  //   page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
-  // const rows = [
-  //   createData("1", "01-01-2022", "Introduction", "www.youtube.com/watch?v=8PopR3x-VMY", "https://drive.google.com/drive/u/1/folders/1WsQ89lblDwF5sT-ppxBPncH39qH-jKY1"),
-  //   createData("2", "03-01-2022", "Arrays", "www.youtube.com/watch?v=8PopR3x-VMY", "https://drive.google.com/drive/u/1/folders/1WsQ89lblDwF5sT-ppxBPncH39qH-jKY1"),
-  //   createData("3", "05-01-2022", "Pointers", "www.youtube.com/watch?v=8PopR3x-VMY","https://drive.google.com/drive/u/1/folders/1WsQ89lblDwF5sT-ppxBPncH39qH-jKY1")
-  //   // createData("1", "01-01-2022", "Introduction", 1, 1),
-  //   // createData("2", "03-01-2022", "Arrays", 1, 1),
-  //   // createData("3", "05-01-2022", "Pointers", 1, 1)
   // ]
   const [rows, setRows] = useState([]);
   const [mounted, setMounted] = useState(false);
@@ -149,6 +69,15 @@ export default function ProfCourse() {
     setMounted(true)
   },[])
 
+  function getRowData(lecNo, date, title, link)
+  {
+    console.log(lecNo, date,title,link)
+    window.sessionStorage.setItem("lecNo", lecNo);
+    window.sessionStorage.setItem("date", date);
+    window.sessionStorage.setItem("title", title);
+    window.sessionStorage.setItem("link", link);
+
+  }
   return (
     <div>
     <MenuAppBar />
@@ -156,7 +85,7 @@ export default function ProfCourse() {
     <div style={{paddingLeft : '15px', paddingBottom : '10px'}}>
       <AddLecture />
     </div>
-    {rows.length == 0 ? <h3> Add a lecture to continue </h3> :
+    {rows.length === 0 ? <h3> Add a lecture to continue </h3> :
     <Root sx={{ width: 1200, maxWidth: '100%', paddingLeft: "15px" }}>
       <table aria-label="custom pagination table">
         <thead>
@@ -171,7 +100,7 @@ export default function ProfCourse() {
         <tbody>
           {(rows
           ).map((row) => (
-            <tr key={row.lecNo}>
+            <tr key={row.lecNo} data-item={row} onClick={() => getRowData(row.lecNo,row.date,row.title,row.recordingLink)}>
               <td style={{ width: 20 }}>{row.lecNo}</td>
               <td style={{ width: 100 }} align="right">
                 {row.date}
@@ -182,12 +111,12 @@ export default function ProfCourse() {
               <td style={{ width: 180 }} align="right">
                 <a href= "/profLecture">
                 <div>
-                  Lecture Link
+                    {row.recordingLink}
                 </div>
                 </a>
               </td>
               <td style={{ width: 180 }} align="right">
-              <a href={row.slides}>
+              <a href= {row.slidesLink} target="_blank">
                 <div>
                   Slides Link
                 </div>

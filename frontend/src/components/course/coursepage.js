@@ -131,7 +131,15 @@ export default function UnstyledTable() {
     setMounted(true)
   },[])
   
+  function getRowData(lecNo, date, title, link)
+  {
+    console.log(lecNo, date,title,link)
+    window.sessionStorage.setItem("student_lecNo", lecNo);
+    window.sessionStorage.setItem("student_lec_date", date);
+    window.sessionStorage.setItem("student_lec_title", title);
+    window.sessionStorage.setItem("student_lec_link", link);
 
+  }
 
 
   return (
@@ -141,7 +149,7 @@ export default function UnstyledTable() {
     <div style={{paddingLeft : '15px', paddingBottom : '10px'}}>
         <Button variant="outlined" style={{textTransform : 'none'}} href="/homepage">Back to Homepage</Button>
     </div>
-    {rows.length == 0 ? <h3> No Lectures added in this course</h3> :
+    {rows.length === 0 ? <h3> No Lectures added in this course</h3> :
     <Root sx={{ width: 1200, maxWidth: '100%', paddingLeft: "15px" }}>
       <table aria-label="custom pagination table">
         <thead>
@@ -155,7 +163,7 @@ export default function UnstyledTable() {
         </thead>
         <tbody>
           {(rows).map((row) => (
-            <tr key={row.lecNo}>
+            <tr key={row.lecNo} data-item={row} onClick={() => getRowData(row.lecNo,row.date,row.title,row.recordingLink)}>
               <td style={{ width: 20 }}>{row.lecNo}</td>
               <td style={{ width: 100 }} align="right">
                 {row.date}

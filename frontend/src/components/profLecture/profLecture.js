@@ -6,9 +6,9 @@ import './profLecture.css';
 import ProfLecturePageTabs from "./profLecturepage_tabs.js";
 
 export default function ProfLecture() {
-    var url ='https://www.youtube.com/watch?v=ysz5S6PUM-U';
-    var lec_no = '1';
-    var lec_title = 'Introduction';
+    var url = window.sessionStorage.getItem("link")
+    var lec_no = window.sessionStorage.getItem("lecNo");
+    var lec_title = window.sessionStorage.getItem("title");
     return (
     <div>
       <MenuAppBar />
