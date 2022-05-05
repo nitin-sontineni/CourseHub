@@ -30,12 +30,11 @@ export default function ProfHomepage() {
   axios.post(
     "http://localhost:8080/student/login",
       {
-        "password" : "12345",
-        "email" : "Nitin@gmail.com",
+        "password" : window.sessionStorage.getItem("password"),
+        "email" : window.sessionStorage.getItem("email"),
       }
     )
   .then(res => { 
-    console.log(res)
     setData(res["data"]["student"]["courses"])
     // window.sessionStorage.setItem("student_name",res["data"]["student"]["name"]);
     // window.sessionStorage.setItem("student_id",res["data"]["student"]["studentId"]);
@@ -69,7 +68,7 @@ export default function ProfHomepage() {
     flexGrow: 10 }}>
     {(data).map((elem) => (
     <Box sx={{ margin : 1}}>
-    <Card sx={{ maxWidth: 345 }} >
+    <Card sx={{ width: 400 }} >
       <CardMedia
         style = {{ height: 200}}
         component="img"

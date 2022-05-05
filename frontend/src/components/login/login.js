@@ -58,6 +58,8 @@ export default function LogIn() {
       window.sessionStorage.setItem("student_name",res["data"]["student"]["name"]);
       window.sessionStorage.setItem("student_id",res["data"]["student"]["studentId"]);
       window.sessionStorage.setItem("student_courses",res["data"]["student"]["courses"]);
+      window.sessionStorage.setItem("password",password);
+      window.sessionStorage.setItem("email",email);
       window.location.href = "/homepage";
     })
     .catch(err => {

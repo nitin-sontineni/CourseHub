@@ -5,7 +5,6 @@ import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-//import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import axios from 'axios';
 
@@ -59,9 +58,6 @@ export default function AddCourse() {
       <Dialog open={open} onClose={handleCancel}>
         <DialogTitle>New Course</DialogTitle>
         <DialogContent>
-          {/* <DialogContentText>
-            Add New course
-          </DialogContentText> */}
           <TextField
             autoFocus
             margin="normal"

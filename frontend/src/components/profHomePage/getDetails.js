@@ -1,15 +1,10 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { styled } from '@mui/system';
-import TablePaginationUnstyled from '@mui/base/TablePaginationUnstyled';
 import Button from '@material-ui/core/Button';
 import MenuAppBar from '../../header';
 import axios from 'axios';
 
-const blue = {
-  200: '#A5D8FF',
-  400: '#3399FF',
-};
 
 const grey = {
   50: '#F3F6F9',
@@ -42,65 +37,6 @@ const Root = styled('div')(
 
   th {
     background-color: ${theme.palette.mode === 'dark' ? grey[900] : grey[100]};
-  }
-  `,
-);
-
-const CustomTablePagination = styled(TablePaginationUnstyled)(
-  ({ theme }) => `
-  & .MuiTablePaginationUnstyled-spacer {
-    display: none;
-  }
-  & .MuiTablePaginationUnstyled-toolbar {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-
-    @media (min-width: 768px) {
-      flex-direction: row;
-      align-items: center;
-    }
-  }
-  & .MuiTablePaginationUnstyled-selectLabel {
-    margin: 0;
-  }
-  & .MuiTablePaginationUnstyled-select {
-    padding: 2px;
-    border: 1px solid ${theme.palette.mode === 'dark' ? grey[800] : grey[200]};
-    border-radius: 50px;
-    background-color: transparent;
-    &:hover {
-      background-color: ${theme.palette.mode === 'dark' ? grey[800] : grey[50]};
-    }
-    &:focus {
-      outline: 1px solid ${theme.palette.mode === 'dark' ? blue[400] : blue[200]};
-    }
-  }
-  & .MuiTablePaginationUnstyled-displayedRows {
-    margin: 0;
-
-    @media (min-width: 768px) {
-      margin-left: auto;
-    }
-  }
-  & .MuiTablePaginationUnstyled-actions {
-    padding: 2px;
-    border: 1px solid ${theme.palette.mode === 'dark' ? grey[800] : grey[200]};
-    border-radius: 50px;
-    text-align: center;
-  }
-  & .MuiTablePaginationUnstyled-actions > button {
-    margin: 0 8px;
-    border: transparent;
-    border-radius: 2px;
-    background-color: transparent;
-    &:hover {
-      background-color: ${theme.palette.mode === 'dark' ? grey[800] : grey[50]};
-    }
-    &:focus {
-      outline: 1px solid ${theme.palette.mode === 'dark' ? blue[400] : blue[200]};
-    }
   }
   `,
 );

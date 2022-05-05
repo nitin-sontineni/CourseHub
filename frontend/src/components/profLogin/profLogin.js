@@ -61,6 +61,8 @@ export default function ProfLogIn() {
         window.sessionStorage.setItem("prof_name",res["data"]["professor"]["name"]);
         window.sessionStorage.setItem("prof_email",res["data"]["professor"]["email"]);
         window.sessionStorage.setItem("prof_courses",res["data"]["professor"]["courses"]);
+        window.sessionStorage.setItem("prof_email",email);
+        window.sessionStorage.setItem("prof_password",password)
         window.location.href = "/profHomepage";
       }
       else
