@@ -176,6 +176,7 @@ router.post("/note/update", (req, res) => {
       console.log(err);
     } else if (foundNote) {
       foundNote.content = note.content;
+      foundNote.public = note.public;
       foundNote.save((err) => {
         if (err) console.log(err);
         else {

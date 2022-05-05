@@ -9,6 +9,7 @@ const NoteSchema = new Schema({
   content: String,
   studentId: String,
   public: Boolean,
+  edit: Boolean,
 });
 
 //model
