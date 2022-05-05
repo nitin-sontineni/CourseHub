@@ -13,6 +13,8 @@ import TextareaAutosize from '@mui/material/TextareaAutosize';
 import CheckIcon from '@mui/icons-material/Check';
 import { TextField } from '@mui/material';
 import { Grid } from '@mui/material';
+import Switch from '@mui/material/Switch';
+
 
 function Notes() {
   const [todos, setTodos] = useState([]);
@@ -21,6 +23,7 @@ function Notes() {
   var placeholder = `Add Notes at ${playedTime}`
   var [input, setInput] = useState('');
   var [newInput, setNewInput] = useState('');
+  //const [checked, setChecked] = React.useState(false);
 
   if(!mounted) {
     axios.post(
@@ -64,7 +67,8 @@ function Notes() {
           "studentId" : window.sessionStorage.getItem("student_id"),
           "content" : input,
           "timeStamp" : playedTime,
-          "public" : false
+          "public" : false,
+          "edit" : false,
           }
         }
       )
@@ -96,7 +100,7 @@ function Notes() {
     {
       if(todos[x]._id === key)
       {
-        todos[x].public = true
+        todos[x].edit = true
         forceUpdate();
       }
     }
@@ -131,6 +135,45 @@ function Notes() {
     })
   }
 
+  function handleChecked(key,timeStamp,content,check)
+  {
+    axios.post(
+      "http://localhost:8080/student/note/update",
+      {
+        "note" : {
+        "courseId" : window.sessionStorage.getItem("student_course_id"),
+        "lecNo" : window.sessionStorage.getItem("student_lecNo"),
+        "studentId" : window.sessionStorage.getItem("student_id"),
+        "content" : content,
+        "timeStamp" : timeStamp,
+        "public" : !check,
+        "edit" : false,
+        "noteId" : key
+        }
+      }
+      )
+    .then(res => { 
+      axios.post(
+        "http://localhost:8080/student/lecturelink",
+          {
+            "courseId" : window.sessionStorage.getItem("student_course_id"),
+            "lecNo" : window.sessionStorage.getItem("student_lecNo"),
+            "studentId" : window.sessionStorage.getItem("student_id")
+          }
+        )
+      .then(res => { 
+        setTodos(res["data"]["notes"]["0"])
+        console.log(todos)
+      })
+      .catch(err => {
+        alert(err);
+      })
+    })
+    .catch(err => {
+      alert(err);
+    }) 
+  }
+
   function handleUpdate(key,timeStamp) {
     if(newInput !==  "")
     {
@@ -144,6 +187,7 @@ function Notes() {
           "content" : newInput,
           "timeStamp" : timeStamp,
           "public" : false,
+          "edit" : false,
           "noteId" : key
           }
         }
@@ -174,7 +218,7 @@ function Notes() {
       {
         if(todos[x]._id === key)
         {
-          todos[x].public = false
+          todos[x].edit = false
           forceUpdate();
         }
       }
@@ -226,14 +270,21 @@ function Notes() {
     <Box sx={{margin : 1}}> 
     <Card sx={{ width: 670}} id={elem._id}>
       <CardContent>
-        <Box sx={{flexDirection:'row'}}>
-        <Box sx={{ display: 'flex',
-          flexDirection: 'column',
+        <Box sx={{
+          margin: 1,
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          flexGrow: 10}}>
+        <Box sx={{ 
+          border: 1,
+          display: 'flex',
+          flexDirection: 'row',
           alignItems: 'left',
           flexGrow: 10,
-          width: 40,
+          maxWidth: 50,
           bgcolor:"black",
-          margin: 1,
+          margin: 0.5,
           paddingLeft : 1,
           paddingRight: 1,
           paddingTop: 0.85,
@@ -243,6 +294,23 @@ function Notes() {
           {elem.timeStamp}
         </Typography>
         </Box>
+        { !elem.public ? 
+          <Switch
+          checked={false}
+          onChange={() => handleChecked(elem._id,elem.timeStamp,elem.content,elem.pubic)}
+          inputProps={{ 'aria-label': 'controlled' }}
+          style={{ display: "flex", justifyContent: "flex-end" }}
+          />
+        :
+        <Switch
+          checked={true}
+          onChange={() => handleChecked(elem._id,elem.timeStamp,elem.content,elem.public)}
+          inputProps={{ 'aria-label': 'controlled' }}
+          style={{ display: "flex", justifyContent: "flex-end" }}
+        />
+      }
+        </Box>
+        <Box>
         <Box sx={{
           border: 1,
           display: 'flex',
@@ -254,7 +322,7 @@ function Notes() {
           margin: 1,
           justifyContent: "flex-start",
           padding: "10px"}}>
-        {!elem.public ? (
+        {!elem.edit ? (
         <Typography variant="h7" color="text.primary" style={{ display: "flex", justifyContent: "flex-start", alignContent: "flex-start" }}>
           {elem.content}
         </Typography> ): (
@@ -272,7 +340,7 @@ function Notes() {
       </CardContent> 
       <CardActions style={{ display: "flex", justifyContent: "flex-end" }}>
 
-        { !elem.public ? (<BorderColorIcon onClick={() => handleEdit(elem._id)}/>) :
+        { !elem.edit ? (<BorderColorIcon onClick={() => handleEdit(elem._id)}/>) :
         (
           <CheckIcon onClick={() => handleUpdate(elem._id,elem.timeStamp)} />
         )}
