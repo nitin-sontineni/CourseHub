@@ -44,8 +44,6 @@ const Root = styled('div')(
 export default function GetDetails() {
   const [details, setDetails] = React.useState([]);
   const [mounted, setMounted] = useState(false);
-  // console.log(window.sessionStorage.getItem("course_id"))
-  console.log(window.sessionStorage.getItem("student_course_id"))
 
   if(!mounted) {
   axios.post(
@@ -66,18 +64,16 @@ export default function GetDetails() {
   React.useEffect(() =>{
     setMounted(true)
   },[])
-  
-
 
 
   return (
     <div>
     <MenuAppBar />
-    <h2> {window.sessionStorage.getItem("student_course_id")} - {window.sessionStorage.getItem("student_course_name")}</h2>
+    <h2> Student Details</h2>
     <div style={{paddingLeft : '15px', paddingBottom : '10px'}}>
-        <Button variant="outlined" style={{textTransform : 'none'}} href="/homepage">Back to Homepage</Button>
+        <Button variant="outlined" style={{textTransform : 'none'}} href="/profHomepage">Back to Homepage</Button>
     </div>
-    {details.length == 0 ? <h3> No students enrolled in this course</h3> :
+    {details.length === 0 ? <h3> No students enrolled in this course</h3> :
     <Root sx={{ width: 1200, maxWidth: '100%', paddingLeft: "15px" }}>
       <table aria-label="custom pagination table">
         <thead>

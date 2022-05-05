@@ -48,7 +48,7 @@ export default function AddCourse() {
   return (
     <div>
       <Button variant="outlined" style={{textTransform : 'none'}} onClick={handleClickOpen}>
-        Entroll to New Course
+        Enroll to New Course
       </Button>
       <Dialog open={open} onClose={handleCancel}>
         <DialogTitle>New Course</DialogTitle>

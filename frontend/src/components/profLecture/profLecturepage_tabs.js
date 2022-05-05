@@ -49,7 +49,7 @@ export default function ProfLecturePageTabs() {
     <Box sx={{ width: '100%' }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={value} onChange={handleChange} aria-label="basic tabs example" centered>
-          <Tab label="Feedaback" style={{textTransform : 'none'}} {...a11yProps(0)} />
+          <Tab label="Feedback" style={{textTransform : 'none'}} {...a11yProps(0)} />
         </Tabs>
       </Box>
       <TabPanel value={value} index={0}>

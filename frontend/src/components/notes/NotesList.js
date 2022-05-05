@@ -338,15 +338,15 @@ function Notes() {
         </Box>
         </Box>
       </CardContent> 
-      <CardActions style={{ display: "flex", justifyContent: "flex-end" }}>
+        <CardActions style={{ display: "flex", justifyContent: "flex-end" }}>
 
-        { !elem.edit ? (<BorderColorIcon onClick={() => handleEdit(elem._id)}/>) :
-        (
-          <CheckIcon onClick={() => handleUpdate(elem._id,elem.timeStamp)} />
-        )}
+          { !elem.edit ? (<BorderColorIcon onClick={() => handleEdit(elem._id)}/>) :
+          (
+            <CheckIcon onClick={() => handleUpdate(elem._id,elem.timeStamp)} />
+          )}
 
-        <DeleteIcon onClick={() => handleDelete(elem._id)}/>
-      </CardActions>   
+          <DeleteIcon onClick={() => handleDelete(elem._id)}/>
+        </CardActions> 
     </Card>
     </Box>
     ))}

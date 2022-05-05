@@ -84,7 +84,12 @@ export default function ProfHomepage() {
                     }}>
                     Go to Course Content
                   </Button>
-                  <Button size="small" variant="contained" style={{ textTransform: 'none' }} href="/studentDetails">Get Details</Button>
+                  <Button size="small" variant="contained" style={{ textTransform: 'none' }} onClick={() => {
+                      console.log(elem.courseid);
+                      window.sessionStorage.setItem("course_id", elem.courseId)
+                      window.sessionStorage.setItem("course_name", elem.courseName)
+                      window.location.href = "/studentDetails"
+                    }}>Get Details</Button>
                 </CardActions>
               </Card>
             </Box>
