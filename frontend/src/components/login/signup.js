@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -14,11 +14,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
-import FormLabel from '@mui/material/FormLabel';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from 'axios';
 
@@ -71,7 +67,8 @@ export default function SignUp() {
     event.preventDefault();
     console.log(name);
     console.log(email);
-
+    if(password === confirmPassword)
+    {
     axios.post(
       "http://localhost:8080/student/signup",
         {
@@ -88,6 +85,12 @@ export default function SignUp() {
     .catch(err => {
       alert(err);
     })
+    }
+    else
+    {
+      alert("Password and Confirm Password are not matching")
+    }
+
   }
 
   return (
@@ -108,7 +111,7 @@ export default function SignUp() {
           <Typography component="h1" variant="h5">
             Sign Up
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <Box component="form" onSubmit={handleSubmit} noValidate={false} sx={{ mt: 1 }}>
           <TextField
               margin="normal"
               required

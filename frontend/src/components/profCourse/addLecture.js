@@ -42,6 +42,8 @@ export default function AddLecture() {
 
   const handleAdd = () => {
     console.log(window.sessionStorage.getItem("course_id"))
+    if( date && title && slides && link)
+    {
     axios.post(
       "http://localhost:8080/professor/lecture/add",
         {
@@ -63,6 +65,11 @@ export default function AddLecture() {
       alert(err);
     })
     setOpen(false);
+  }
+  else
+  {
+    alert("All fields are mandatory");
+  }
   };
 
   return (

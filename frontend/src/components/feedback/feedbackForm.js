@@ -111,7 +111,7 @@ export default function TakeFeedback() {
         {
           "review" : 
           {
-            "lecNo" : "1",
+            "lecNo" : window.sessionStorage.getItem("student_lecNo"),
             "timeStamp" : window.sessionStorage.getItem("student_playedTime"),
             "rating" : value.toString(),
             "feedBack" : feedback,

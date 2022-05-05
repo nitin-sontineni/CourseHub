@@ -27,6 +27,8 @@ export default function AddCourse() {
 
   const handleAdd = () => {
     console.log(courseid);
+    if(courseid)
+    {
     axios.post(
       "http://localhost:8080/student/course/enroll",
         {
@@ -43,6 +45,11 @@ export default function AddCourse() {
     })
 
     setOpen(false);
+  }
+  else
+  {
+    window.location.href = "/homepage";
+  }
   };
 
   return (

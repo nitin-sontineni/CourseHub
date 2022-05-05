@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -14,11 +14,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import Radio from '@mui/material/Radio';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
-import FormLabel from '@mui/material/FormLabel';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from 'axios';
 
@@ -64,14 +60,16 @@ export default function ProfSignUp() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    if(password === confirmPassword)
+    {
     axios.post(
       "http://localhost:8080/professor/signup",
         {
           "name" : name,
           "password" : password,
-          "email" : email,
+        "email" : email,
       }
-      )
+    )  
     .then(res => { 
       console.log(res);
       window.location.href = "/profLogin";
@@ -79,6 +77,11 @@ export default function ProfSignUp() {
     .catch(err => {
       alert(err);
     })
+    }
+    else
+    {
+      alert("Password and Confirm Password are not matching")
+    }
     //window.location.href = "/profLogin";
   };
 
@@ -100,7 +103,7 @@ export default function ProfSignUp() {
           <Typography component="h1" variant="h5">
             Sign Up
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <Box component="form" onSubmit={handleSubmit} noValidate={false} sx={{ mt: 1 }}>
           <TextField
               margin="normal"
               required
@@ -119,6 +122,7 @@ export default function ProfSignUp() {
               id="email"
               label="Email Address"
               name="email"
+              type="email"
               autoComplete="email"
               onChange={emailChangeHandler}
             />

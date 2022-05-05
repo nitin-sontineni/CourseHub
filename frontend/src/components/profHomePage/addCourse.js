@@ -7,6 +7,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import axios from 'axios';
+import { Box } from '@mui/system';
 
 export default function AddCourse() {
   const [open, setOpen] = React.useState(false);
@@ -32,6 +33,8 @@ export default function AddCourse() {
   const handleAdd = () => {
     window.sessionStorage.setItem("new_course_name", courseName)
     window.sessionStorage.setItem("new_course_id", courseid)
+    if(courseName && courseid)
+    {
     axios.post(
       "http://localhost:8080/professor/course/add",
         {
@@ -48,6 +51,11 @@ export default function AddCourse() {
       alert(err);
     })
     setOpen(false);
+  }
+  else
+  {
+    alert("You need to provide both course name and course id to add a course")
+  }
   };
 
   return (
@@ -58,6 +66,7 @@ export default function AddCourse() {
       <Dialog open={open} onClose={handleCancel}>
         <DialogTitle>New Course</DialogTitle>
         <DialogContent>
+          <Box noValidate={false}>
           <TextField
             autoFocus
             margin="normal"
@@ -78,6 +87,7 @@ export default function AddCourse() {
             required
             onChange={courseNameChangeHandler}
           />
+          </Box>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCancel}>Cancel</Button>
