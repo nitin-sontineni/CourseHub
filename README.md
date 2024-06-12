@@ -1,2 +1,2 @@
-# BPHC_Classroom
+# CourseHub
 PWA for Note-Taking
